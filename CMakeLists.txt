@@ -28,12 +28,11 @@ endif(CMAKE_BUILD_TYPE MATCHES Debug)
 add_definitions(-D_GNU_SOURCE)
 add_definitions(-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64)
 
-check_include_files(regex.h HAVE_REGEX_H)
-if(HAVE_REGEX_H)
-    add_definitions(-DHAVE_REGEX_H)
-else(HAVE_REGEX_H)
-    message("***  WARNING: GNU C regex library not found.")
-endif(HAVE_REGEX_H)
+#
+## Set this search path for cmake, to find our custom search modules
+#
+# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
+# find_package(LIBIDN REQUIRED)
 
 include_directories(BEFORE /yuneta/development/output/include)
 set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /yuneta/development/output/lib)
@@ -59,7 +58,6 @@ SET (YUNO_HDRS
 ##############################################
 ADD_EXECUTABLE(emailsender ${YUNO_SRCS} ${YUNO_HDRS})
 
-if(CMAKE_BUILD_TYPE MATCHES Debug)
 TARGET_LINK_LIBRARIES(emailsender
     /yuneta/development/output/lib/libyuneta-core.a
     /yuneta/development/output/lib/libginsfsm.a
@@ -68,30 +66,19 @@ TARGET_LINK_LIBRARIES(emailsender
     /yuneta/development/output/lib/libjansson.a
     /yuneta/development/output/lib/libunwind.a
     /yuneta/development/output/lib/libpcre2-8.a
+    /yuneta/development/output/lib/libcurl.a
+    /yuneta/development/output/lib/libssl.a
+    /yuneta/development/output/lib/libcrypto.a
 
     pthread     # used by libuv
     lzma        # used by libunwind
 
-    /yuneta/development/output/lib/libcurl.a
-    ssl crypto lber ldap z idn2
+    dl z
 )
-else(CMAKE_BUILD_TYPE MATCHES Debug)
-TARGET_LINK_LIBRARIES(emailsender
-    /yuneta/development/output/lib/libyuneta-core.a
-    /yuneta/development/output/lib/libginsfsm.a
-    /yuneta/development/output/lib/libghelpers.a
-    /yuneta/development/output/lib/libuv.a
-    /yuneta/development/output/lib/libjansson.a
-    /yuneta/development/output/lib/libunwind.a
-    /yuneta/development/output/lib/libpcre2-8.a
 
-    pthread     # used by libuv
-    lzma        # used by libunwind
-
-    /yuneta/development/output/lib/libcurl.a
-    ssl crypto lber ldap z idn2
-)
-endif(CMAKE_BUILD_TYPE MATCHES Debug)
+# if(LIBIDN_FOUND)
+#     target_link_libraries(${PROJECT_NAME} ${LIBIDN_LIBRARIES})
+# endif()
 
 ##############################################
 #   Installation
