@@ -70,7 +70,7 @@ TARGET_LINK_LIBRARIES(emailsender
     /yuneta/development/output/lib/libssl.a
     /yuneta/development/output/lib/libcrypto.a
 
-    pthread     # used by libuv
+    pthread dl  # used by libuv
     lzma        # used by libunwind
 
     dl z
