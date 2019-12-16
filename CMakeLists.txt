@@ -61,7 +61,7 @@ ADD_EXECUTABLE(emailsender ${YUNO_SRCS} ${YUNO_HDRS})
 TARGET_LINK_LIBRARIES(emailsender
     /yuneta/development/output/lib/libyuneta-core.a
     /yuneta/development/output/lib/libginsfsm.a
-    /yuneta/development/output/lib/libghelpersd.a
+    /yuneta/development/output/lib/libghelpers.a
     /yuneta/development/output/lib/libuv.a
     /yuneta/development/output/lib/libjansson.a
     /yuneta/development/output/lib/libunwind.a
