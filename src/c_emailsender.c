@@ -40,6 +40,7 @@ SDATA_END()
 PRIVATE sdata_desc_t pm_send_email[] = {
 /*-PM----type-----------name------------flag------------default-----description---------- */
 SDATAPM (ASN_OCTET_STR, "to",           0,              0,          "To field."),
+SDATAPM (ASN_OCTET_STR, "reply-to",     0,              0,          "Reply-To field."),
 SDATAPM (ASN_OCTET_STR, "subject",      0,              0,          "Subject field."),
 SDATAPM (ASN_OCTET_STR, "attachment",   0,              0,          "Attachment file."),
 SDATAPM (ASN_OCTET_STR, "body",         0,              0,          "Email body."),
@@ -290,6 +291,7 @@ PRIVATE json_t *cmd_help(hgobj gobj, const char *cmd, json_t *kw, hgobj src)
 PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj src)
 {
     const char *to = kw_get_str(kw, "to", 0, 0);
+    const char *reply_to = kw_get_str(kw, "reply-to", 0, 0);
     const char *subject = kw_get_str(kw, "subject", "", 0);
     const char *attachment = kw_get_str(kw, "attachment", 0, 0);
     const char *body = kw_get_str(kw, "body", "", 0);
@@ -313,8 +315,9 @@ PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj sr
         gbuf_append(gbuf, (void *)body, len);
     }
 
-    json_t *kw_send = json_pack("{s:s, s:s, s:I, s:b, s:s}",
+    json_t *kw_send = json_pack("{s:s, s:s, s:s, s:I, s:b, s:s}",
         "to", to,
+        "reply_to", reply_to,
         "subject", subject,
         "gbuffer", (json_int_t)(size_t)gbuf,
         "__persistent_event__", 1,
@@ -375,6 +378,7 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
     }
     const char *to = kw_get_str(kw, "to", 0, 0);
     const char *cc = kw_get_str(kw, "cc", "", 0);
+    const char *reply_to = kw_get_str(kw, "reply_to", "", 0);
     const char *subject = kw_get_str(kw, "subject", "", 0);
     BOOL is_html = kw_get_bool(kw, "is_html", 0, 0);
     const char *attachment = kw_get_str(kw, "attachment", "", 0);
@@ -413,7 +417,7 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
      *  Usa ips numéricas!
      */
     json_t *kw_curl = json_pack(
-        "{s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:b, s:s, s:I}",
+        "{s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:b, s:s, s:I}",
         "command", "SEND",
         "dst_event", "EV_CURL_RESPONSE",
         "username", priv->username,
@@ -422,6 +426,7 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
         "from", from,
         "to", to,
         "cc", cc,
+        "reply_to", reply_to,
         "subject", subject,
         "is_html", is_html,
         "mail_ref", "",

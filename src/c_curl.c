@@ -745,6 +745,7 @@ PRIVATE GBUFFER *build_email(
     const char *from,
     const char *to,
     const char *cc,
+    const char *reply_to,
     const char *subject,
     BOOL is_html,
     const char *attachment)
@@ -761,6 +762,9 @@ PRIVATE GBUFFER *build_email(
     gbuf_printf(new_gbuf, "From: %s\r\n", from);
     if(!empty_string(cc)) {
         gbuf_printf(new_gbuf, "Cc: %s\r\n", cc);
+    }
+    if(!empty_string(reply_to)) {
+        gbuf_printf(new_gbuf, "Reply-To: %s\r\n", reply_to);
     }
     gbuf_printf(new_gbuf, "Subject: %s\r\n", subject);
     gbuf_printf(new_gbuf, "MIME-Version: 1.0\r\n");
@@ -1048,10 +1052,21 @@ PRIVATE int ac_command(hgobj gobj, const char *event, json_t *kw, hgobj src)
         curl_easy_setopt(handle, CURLOPT_MAIL_RCPT, priv->recipients);
 
         const char *subject = kw_get_str(kw, "subject", 0, 0);
+        const char *reply_to = kw_get_str(kw, "reply_to", 0, 0);
         BOOL is_html = kw_get_bool(kw, "is_html", 0, 0);
         GBUFFER *gbuf = (GBUFFER *)(size_t)kw_get_int(kw, "gbuffer", 0, 0);
         const char *attachment = kw_get_str(kw, "attachment", 0, 0);
-        GBUFFER *src_gbuffer = build_email(gobj, gbuf, from, to, cc, subject, is_html, attachment);
+        GBUFFER *src_gbuffer = build_email(
+            gobj,
+            gbuf,
+            from,
+            to,
+            cc,
+            reply_to,
+            subject,
+            is_html,
+            attachment
+        );
 
         if(gobj_trace_level(gobj_default_service()) & TRACE_USER_LEVEL) {
             log_debug_bf(0, gbuf_cur_rd_pointer(src_gbuffer), gbuf_leftbytes(src_gbuffer), "email");
