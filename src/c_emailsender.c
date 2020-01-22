@@ -78,6 +78,7 @@ SDATA (ASN_OCTET_STR,   "username",             SDF_RD,                     0,  
 SDATA (ASN_OCTET_STR,   "password",             SDF_RD,                     0,              "email password"),
 SDATA (ASN_OCTET_STR,   "url",                  SDF_RD|SDF_REQUIRED,        0,              "smtp URL"),
 SDATA (ASN_OCTET_STR,   "from",                 SDF_RD|SDF_REQUIRED,        0,              "default from"),
+SDATA (ASN_OCTET_STR,   "from_beatiful",        SDF_RD,                     0,              "from with name"),
 SDATA (ASN_UNSIGNED,    "max_tx_queue",         SDF_PERSIST|SDF_WR,         200,            "Maximum messages in tx queue."),
 SDATA (ASN_UNSIGNED,    "timeout_dequeue",      SDF_PERSIST|SDF_WR,         10,             "Timeout to dequeue msgs."),
 SDATA (ASN_UNSIGNED,    "max_retries",          SDF_PERSIST|SDF_WR,         4,              "Maximum retries to send email"),
@@ -317,7 +318,7 @@ PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj sr
 
     json_t *kw_send = json_pack("{s:s, s:s, s:s, s:I, s:b, s:s}",
         "to", to,
-        "reply_to", reply_to,
+        "reply_to", reply_to?reply_to:"",
         "subject", subject,
         "gbuffer", (json_int_t)(size_t)gbuf,
         "__persistent_event__", 1,
@@ -376,6 +377,10 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
     if(empty_string(from)) {
         from = priv->from;
     }
+    const char *from_beatiful = kw_get_str(kw, "from_beatiful", 0, 0);
+    if(empty_string(from_beatiful)) {
+        from_beatiful = gobj_read_str_attr(gobj, "from_beatiful");
+    }
     const char *to = kw_get_str(kw, "to", 0, 0);
     const char *cc = kw_get_str(kw, "cc", "", 0);
     const char *reply_to = kw_get_str(kw, "reply_to", "", 0);
@@ -417,13 +422,14 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
      *  Usa ips numéricas!
      */
     json_t *kw_curl = json_pack(
-        "{s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:b, s:s, s:I}",
+        "{s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:s, s:b, s:s, s:I}",
         "command", "SEND",
         "dst_event", "EV_CURL_RESPONSE",
         "username", priv->username,
         "password", priv->password,
         "url", priv->url,
         "from", from,
+        "from_beatiful", from_beatiful,
         "to", to,
         "cc", cc,
         "reply_to", reply_to,

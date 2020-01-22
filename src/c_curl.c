@@ -743,6 +743,7 @@ PRIVATE GBUFFER *build_email(
     hgobj gobj,
     GBUFFER *gbuf, // not owned
     const char *from,
+    const char *from_beatiful,
     const char *to,
     const char *cc,
     const char *reply_to,
@@ -759,7 +760,11 @@ PRIVATE GBUFFER *build_email(
     GBUFFER *new_gbuf = gbuf_create(len, len, file_size>0?(len+file_size*4):0, 0);
 
     gbuf_printf(new_gbuf, "To: %s\r\n", to);
-    gbuf_printf(new_gbuf, "From: %s\r\n", from);
+    if(!empty_string(from_beatiful)) {
+        gbuf_printf(new_gbuf, "From: %s\r\n", from_beatiful);
+    } else {
+        gbuf_printf(new_gbuf, "From: %s\r\n", from);
+    }
     if(!empty_string(cc)) {
         gbuf_printf(new_gbuf, "Cc: %s\r\n", cc);
     }
@@ -915,7 +920,7 @@ PRIVATE int ac_command(hgobj gobj, const char *event, json_t *kw, hgobj src)
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0);
     }
     curl_easy_setopt(handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-    if(gobj_trace_level(gobj) & TRACE_CURL) {
+    if(1 || gobj_trace_level(gobj) & TRACE_CURL) {
         curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
     }
     curl_easy_setopt(handle, CURLOPT_TCP_KEEPALIVE, 1L);
@@ -1051,6 +1056,7 @@ PRIVATE int ac_command(hgobj gobj, const char *event, json_t *kw, hgobj src)
         // TODO V568 It's odd that 'sizeof()' operator evaluates the size of a pointer to a class, but not the size of the 'priv->recipients' class object.
         curl_easy_setopt(handle, CURLOPT_MAIL_RCPT, priv->recipients);
 
+        const char *from_beatiful = kw_get_str(kw, "from_beatiful", 0, 0);
         const char *subject = kw_get_str(kw, "subject", 0, 0);
         const char *reply_to = kw_get_str(kw, "reply_to", 0, 0);
         BOOL is_html = kw_get_bool(kw, "is_html", 0, 0);
@@ -1060,6 +1066,7 @@ PRIVATE int ac_command(hgobj gobj, const char *event, json_t *kw, hgobj src)
             gobj,
             gbuf,
             from,
+            from_beatiful,
             to,
             cc,
             reply_to,
