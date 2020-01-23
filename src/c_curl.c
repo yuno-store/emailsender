@@ -920,7 +920,7 @@ PRIVATE int ac_command(hgobj gobj, const char *event, json_t *kw, hgobj src)
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0);
     }
     curl_easy_setopt(handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-    if(1 || gobj_trace_level(gobj) & TRACE_CURL) {
+    if(gobj_trace_level(gobj) & TRACE_CURL) {
         curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
     }
     curl_easy_setopt(handle, CURLOPT_TCP_KEEPALIVE, 1L);
