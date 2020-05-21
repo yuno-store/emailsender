@@ -803,7 +803,7 @@ PRIVATE GCLASS _gclass = {
     0,  // acl
     s_user_trace_level,
     command_table,  // command_table
-    0, // gcflag
+    gcflag_required_start_to_play, // gcflag
 };
 
 /***************************************************************************
