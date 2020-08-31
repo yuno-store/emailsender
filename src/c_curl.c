@@ -149,7 +149,7 @@ PRIVATE void mt_create(hgobj gobj)
 
     dl_init(&priv->dl_uv_polls);
 
-    priv->timer = gobj_create("curl", GCLASS_TIMER, 0, gobj);
+    priv->timer = gobj_create("", GCLASS_TIMER, 0, gobj);
     priv->easyTb = gobj_read_iter_attr(gobj, "easyTb");
 
     /*

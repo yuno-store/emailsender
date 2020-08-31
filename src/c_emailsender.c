@@ -159,7 +159,7 @@ PRIVATE void mt_create(hgobj gobj)
     PRIVATE_DATA *priv = gobj_priv_data(gobj);
 
     priv->tb_queue = gobj_read_iter_attr(gobj, "queueTb");
-    priv->timer = gobj_create("emailsender", GCLASS_TIMER, 0, gobj);
+    priv->timer = gobj_create("", GCLASS_TIMER, 0, gobj);
     priv->curl = gobj_create("emailsender", GCLASS_CURL, 0, gobj);
     gobj_set_bottom_gobj(gobj, priv->curl);
     //priv->persist = gobj_find_service("persist", FALSE);
