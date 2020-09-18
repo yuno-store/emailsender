@@ -74,6 +74,7 @@ TARGET_LINK_LIBRARIES(emailsender
     lzma        # used by libunwind
 
     dl z
+    uuid
 )
 
 # if(LIBIDN_FOUND)
