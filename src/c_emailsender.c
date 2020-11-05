@@ -729,7 +729,7 @@ PRIVATE LMETHOD lmt[] = {
  *---------------------------------------------*/
 PRIVATE GCLASS _gclass = {
     0,  // base
-    GCLASS_EMAILSENDER_NAME,      // CHANGE WITH each gclass
+    GCLASS_EMAILSENDER_NAME,
     &fsm,
     {
         mt_create,
