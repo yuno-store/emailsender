@@ -28,7 +28,7 @@ PRIVATE char fixed_config[]= "\
 {                                                                   \n\
     'yuno': {                                                       \n\
         'yuno_role': 'emailsender',                                 \n\
-        'classifiers': ['yuneta', 'utility']                        \n\
+        'tags': ['yuneta', 'utils']                                 \n\
     }                                                               \n\
 }                                                                   \n\
 ";
