@@ -84,28 +84,28 @@ PRIVATE char variable_config[]= "\
                     },                                                  \n\
                     'zchilds': [                                        \n\
                         {                                               \n\
-                            'name': 'emailsender',           \n\
+                            'name': 'emailsender',                      \n\
                             'gclass': 'IOGate',                         \n\
                             'kw': {                                     \n\
                             },                                          \n\
                             'zchilds': [                                \n\
                                 {                                       \n\
-                                    'name': 'emailsender',   \n\
+                                    'name': 'emailsender',              \n\
                                     'gclass': 'Channel',                \n\
                                     'kw': {                             \n\
                                     },                                  \n\
                                     'zchilds': [                        \n\
                                         {                               \n\
-                                            'name': 'emailsender',\n\
+                                            'name': 'emailsender',      \n\
                                             'gclass': 'GWebSocket',     \n\
                                             'kw': {                     \n\
                                                 'kw_connex': {          \n\
-                                                    'urls':[                            \n\
-                                                        '(^^__url__^^)'                 \n\
-                                                    ]                                   \n\
-                                                }                                       \n\
-                                            }                                           \n\
-                                        }                                               \n\
+                                                    'urls':[            \n\
+                                                        '(^^__url__^^)' \n\
+                                                    ]                   \n\
+                                                }                       \n\
+                                            }                           \n\
+                                        }                               \n\
                                     ]                                   \n\
                                 }                                       \n\
                             ]                                           \n\
