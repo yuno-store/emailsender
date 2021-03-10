@@ -17,7 +17,7 @@
 #define APP_NAME        "emailsender"
 #define APP_DOC         "Email sender"
 
-#define APP_VERSION     "4.10.11"
+#define APP_VERSION     "4.10.12"
 #define APP_DATETIME    __DATE__ " " __TIME__
 #define APP_SUPPORT     "<niyamaka at yuneta.io>"
 
