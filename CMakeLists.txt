@@ -34,7 +34,7 @@ add_definitions(-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64)
 # set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 # find_package(LIBIDN REQUIRED)
 
-include_directories(BEFORE /yuneta/development/output/include)
+include_directories(/yuneta/development/output/include)
 set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /yuneta/development/output/lib)
 
 ##############################################
