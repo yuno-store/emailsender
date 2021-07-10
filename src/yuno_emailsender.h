@@ -5,8 +5,7 @@
  *          Copyright (c) 2016 Niyamaka.
  *          All Rights Reserved.
  ****************************************************************************/
-#ifndef _YUNO_EMAILSENDER_H
-#define _YUNO_EMAILSENDER_H 1
+#pragma once
 
 #include <yuneta.h>
 
@@ -24,7 +23,4 @@ PUBLIC void register_yuno_emailsender(void);
 
 #ifdef __cplusplus
 }
-#endif
-
-
 #endif

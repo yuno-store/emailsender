@@ -7,8 +7,7 @@
  *          Copyright (c) 2016 Niyamaka.
  *          All Rights Reserved.
  ****************************************************************************/
-#ifndef _C_EMAILSENDER_H
-#define _C_EMAILSENDER_H 1
+#pragma once
 
 #include <yuneta.h>
 #include "c_curl.h"
@@ -51,6 +50,4 @@ PUBLIC GCLASS *gclass_emailsender(void);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

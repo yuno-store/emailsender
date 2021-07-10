@@ -8,9 +8,7 @@
  *          Copyright (c) 2014 by Niyamaka.
  *          All Rights Reserved.
  ****************************************************************************/
-
-#ifndef _C_CURL_H
-#define _C_CURL_H 1
+#pragma once
 
 #include <yuneta.h>
 
@@ -31,7 +29,3 @@ PUBLIC GCLASS *gclass_curl(void);
 #ifdef __cplusplus
 }
 #endif
-
-
-#endif
-
