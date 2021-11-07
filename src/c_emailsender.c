@@ -301,7 +301,7 @@ PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj sr
         return msg_iev_build_webix(
             gobj,
             -200,
-            json_local_sprintf(
+            json_sprintf(
                 "Field 'to' is empty."
             ),
             0,
@@ -336,7 +336,7 @@ PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj sr
     return msg_iev_build_webix(
         gobj,
         0,
-        json_local_sprintf(
+        json_sprintf(
             "Email enqueue to '%s'.",
             to
         ),
