@@ -76,6 +76,7 @@ TARGET_LINK_LIBRARIES(emailsender
     dl z
     uuid
     m
+    util
 )
 
 # if(LIBIDN_FOUND)
