@@ -1075,10 +1075,6 @@ PRIVATE int ac_command(hgobj gobj, const char *event, json_t *kw, hgobj src)
             attachment
         );
 
-        if(gobj_trace_level(gobj_default_service()) & TRACE_USER_LEVEL) {
-            log_debug_bf(0, gbuf_cur_rd_pointer(src_gbuffer), gbuf_leftbytes(src_gbuffer), "email");
-        }
-
         curl_off_t uploadsize = gbuf_leftbytes(src_gbuffer);
         curl_easy_setopt(handle, CURLOPT_INFILESIZE_LARGE, uploadsize);
         sdata_write_pointer(sd_easy, "src_gbuffer", src_gbuffer);

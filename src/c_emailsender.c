@@ -102,10 +102,10 @@ SDATA_END()
  *      GClass trace levels
  *---------------------------------------------*/
 enum {
-    TRACE_USER = 0x0001,
+    TRACE_MESSAGES = 0x0001,
 };
 PRIVATE const trace_level_t s_user_trace_level[16] = {
-{"trace_user",        "Trace user description"},
+{"messages",        "Trace messages"},
 {0, 0},
 };
 
@@ -466,7 +466,12 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
         }
     }
 
-    (priv->psend)++;
+    (*priv->psend)++;
+
+    if(gobj_trace_level(gobj) & TRACE_MESSAGES) {
+        log_debug_json(0, kw_curl, "SEND EMAIL to %s", priv->url);
+        log_debug_bf(0, gbuf_cur_rd_pointer(gbuf), gbuf_leftbytes(gbuf), "SEND EMAIL to %s", priv->url);
+    }
 
     gobj_change_state(gobj, "ST_WAIT_SEND_ACK");
     set_timeout(priv->timer, priv->timeout_response);
@@ -491,11 +496,11 @@ PRIVATE int ac_enqueue_message(hgobj gobj, const char *event, json_t *kw, hgobj 
             "gobj",         "%s", gobj_full_name(gobj),
             "function",     "%s", __FUNCTION__,
             "msgset",       "%s", MSGSET_INTERNAL_ERROR,
-            "msg",          "%s", "Tiro email por cola llena",
+            "msg",          "%s", "Tiro EMAIL por cola llena",
             NULL
         );
         json_t *jn_msg = sdata2json(sd_email, -1, 0);
-        log_debug_json(0, jn_msg, "Tiro email por cola llena");
+        log_debug_json(0, jn_msg, "Tiro EMAIL por cola llena");
         json_decref(jn_msg);
 
         rc_delete_resource(sd_email, sdata_destroy);
@@ -533,7 +538,7 @@ PRIVATE int ac_curl_response(hgobj gobj, const char *event, json_t *kw, hgobj sr
         rc_delete_resource(priv->sd_cur_email, sdata_destroy);
         priv->sd_cur_email = 0;
         trace_msg("EMAIL SENT to %s", priv->url);
-        (priv->psent)++;
+        (*priv->psent)++;
     }
 
     gobj_change_state(gobj, "ST_IDLE");
