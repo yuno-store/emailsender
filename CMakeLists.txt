@@ -65,6 +65,7 @@ TARGET_LINK_LIBRARIES(emailsender
     /yuneta/development/output/lib/libuv.a
     /yuneta/development/output/lib/libjansson.a
     /yuneta/development/output/lib/libunwind.a
+    /yuneta/development/output/lib/libpcre2-posix.a
     /yuneta/development/output/lib/libpcre2-8.a
     /yuneta/development/output/lib/libcurl.a
     /yuneta/development/output/lib/libssl.a
