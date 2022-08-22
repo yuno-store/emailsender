@@ -357,6 +357,7 @@ PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj sr
 PRIVATE json_t *cmd_disable_alarm_emails(hgobj gobj, const char *cmd, json_t *kw, hgobj src)
 {
     gobj_write_bool_attr(gobj, "disable_alarm_emails", TRUE);
+    gobj_save_persistent_attrs(gobj, 0);
 
     /*
      *  Inform
@@ -377,6 +378,7 @@ PRIVATE json_t *cmd_disable_alarm_emails(hgobj gobj, const char *cmd, json_t *kw
 PRIVATE json_t *cmd_enable_alarm_emails(hgobj gobj, const char *cmd, json_t *kw, hgobj src)
 {
     gobj_write_bool_attr(gobj, "disable_alarm_emails", FALSE);
+    gobj_save_persistent_attrs(gobj, 0);
 
     /*
      *  Inform
