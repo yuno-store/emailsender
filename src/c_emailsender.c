@@ -29,6 +29,8 @@
  ***************************************************************************/
 PRIVATE json_t *cmd_help(hgobj gobj, const char *cmd, json_t *kw, hgobj src);
 PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj src);
+PRIVATE json_t *cmd_enable_alarm_emails(hgobj gobj, const char *cmd, json_t *kw, hgobj src);
+PRIVATE json_t *cmd_disable_alarm_emails(hgobj gobj, const char *cmd, json_t *kw, hgobj src);
 
 PRIVATE sdata_desc_t pm_help[] = {
 /*-PM----type-----------name------------flag------------default-----description---------- */
@@ -53,6 +55,8 @@ PRIVATE sdata_desc_t command_table[] = {
 /*-CMD---type-----------name----------------alias---------------items-----------json_fn---------description---------- */
 SDATACM (ASN_SCHEMA,    "help",             a_help,             pm_help,        cmd_help,       "Command's help"),
 SDATACM (ASN_SCHEMA,    "send-email",       0,                  pm_send_email,  cmd_send_email, "Send email."),
+SDATACM (ASN_SCHEMA,    "disable-alarm-emails",0,               0,              cmd_disable_alarm_emails, "Disable send alarm emails."),
+SDATACM (ASN_SCHEMA,    "enable-alarm-emails",0,                0,              cmd_enable_alarm_emails, "Enable send alarm emails."),
 SDATA_END()
 };
 
@@ -88,6 +92,7 @@ SDATA (ASN_OCTET_STR,   "test_email",           SDF_PERSIST|SDF_WR,         "", 
 
 SDATA (ASN_COUNTER64,   "send",                 SDF_RD|SDF_STATS,           0,              "Emails send"),
 SDATA (ASN_COUNTER64,   "sent",                 SDF_RD|SDF_STATS,           0,              "Emails sent"),
+SDATA (ASN_BOOLEAN,     "disable_alarm_emails", SDF_PERSIST|SDF_WR,         FALSE,          "True to don't send alarm emails"),
 
 SDATA (ASN_POINTER,     "user_data",            0,                          0,              "user data"),
 SDATA (ASN_POINTER,     "user_data2",           0,                          0,              "more user data"),
@@ -346,6 +351,46 @@ PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj sr
     );
 }
 
+/***************************************************************************
+ *
+ ***************************************************************************/
+PRIVATE json_t *cmd_disable_alarm_emails(hgobj gobj, const char *cmd, json_t *kw, hgobj src)
+{
+    gobj_write_bool_attr(gobj, "disable_alarm_emails", TRUE);
+
+    /*
+     *  Inform
+     */
+    return msg_iev_build_webix(
+        gobj,
+        0,
+        json_sprintf("Alarm emails disabled"),
+        0,
+        0,
+        kw  // owned
+    );
+}
+
+/***************************************************************************
+ *
+ ***************************************************************************/
+PRIVATE json_t *cmd_enable_alarm_emails(hgobj gobj, const char *cmd, json_t *kw, hgobj src)
+{
+    gobj_write_bool_attr(gobj, "disable_alarm_emails", FALSE);
+
+    /*
+     *  Inform
+     */
+    return msg_iev_build_webix(
+        gobj,
+        0,
+        json_sprintf("Alarm emails enabled"),
+        0,
+        0,
+        kw  // owned
+    );
+}
+
 
 
 
@@ -487,6 +532,21 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
 PRIVATE int ac_enqueue_message(hgobj gobj, const char *event, json_t *kw, hgobj src)
 {
     PRIVATE_DATA *priv = gobj_priv_data(gobj);
+
+    if(gobj_read_bool_attr(gobj, "disable_alarm_emails")) {
+        const char *subject = kw_get_str(kw, "subject", "", 0);
+        if(strstr(subject, "ALERTA Encolamiento")) {
+            log_warning(0,
+                "gobj",         "%s", gobj_full_name(gobj),
+                "function",     "%s", __FUNCTION__,
+                "msgset",       "%s", MSGSET_INFO,
+                "msg",          "%s", "Ignore 'ALERTA Encolamiento' email",
+                NULL
+            );
+            KW_DECREF(kw);
+            return 0;
+        }
+    }
 
     size_t size = rc_iter_size(priv->tb_queue);
     if(size >= priv->max_tx_queue) {
