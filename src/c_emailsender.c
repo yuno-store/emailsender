@@ -537,7 +537,7 @@ PRIVATE int ac_enqueue_message(hgobj gobj, const char *event, json_t *kw, hgobj 
 
     if(gobj_read_bool_attr(gobj, "disable_alarm_emails")) {
         const char *subject = kw_get_str(kw, "subject", "", 0);
-        if(strstr(subject, "ALERTA Encolamiento")) {
+        if(strstr(subject, "ALERTA Encolamiento")) { // WARNING repeated in c_qiogate.c
             log_warning(0,
                 "gobj",         "%s", gobj_full_name(gobj),
                 "function",     "%s", __FUNCTION__,
