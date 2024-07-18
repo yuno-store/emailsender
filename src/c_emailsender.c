@@ -45,6 +45,8 @@ SDATAPM (ASN_OCTET_STR, "to",           0,              0,          "To field.")
 SDATAPM (ASN_OCTET_STR, "reply-to",     0,              0,          "Reply-To field."),
 SDATAPM (ASN_OCTET_STR, "subject",      0,              0,          "Subject field."),
 SDATAPM (ASN_OCTET_STR, "attachment",   0,              0,          "Attachment file."),
+SDATAPM (ASN_OCTET_STR, "inline_file_id",0,             0,          "Inline file ID (must be attachment too)."),
+SDATAPM (ASN_BOOLEAN,   "is_html",      0,              0,          "Is html"),
 SDATAPM (ASN_OCTET_STR, "body",         0,              0,          "Email body."),
 SDATA_END()
 };
@@ -300,6 +302,8 @@ PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj sr
     const char *reply_to = kw_get_str(kw, "reply-to", 0, 0);
     const char *subject = kw_get_str(kw, "subject", "", 0);
     const char *attachment = kw_get_str(kw, "attachment", 0, 0);
+    BOOL is_html = kw_get_bool(kw, "is_html", 0, 0);
+    const char *inline_file_id = kw_get_str(kw, "inline_file_id", 0, 0);
     const char *body = kw_get_str(kw, "body", "", 0);
 
     if(empty_string(to)) {
@@ -321,16 +325,21 @@ PRIVATE json_t *cmd_send_email(hgobj gobj, const char *cmd, json_t *kw, hgobj sr
         gbuf_append(gbuf, (void *)body, len);
     }
 
-    json_t *kw_send = json_pack("{s:s, s:s, s:s, s:I, s:b, s:s}",
+    json_t *kw_send = json_pack("{s:s, s:s, s:s, s:I, s:b, s:b, s:s}",
         "to", to,
         "reply_to", reply_to?reply_to:"",
         "subject", subject,
         "gbuffer", (json_int_t)(size_t)gbuf,
+        "is_html", is_html,
         "__persistent_event__", 1,
         "__persistence_reference__", "asdfasdfasfdsdf" // TODO no se usa persistencia
     );
     if(attachment && access(attachment, 0)==0) {
         json_object_set_new(kw_send, "attachment", json_string(attachment));
+        if(!empty_string(inline_file_id)) {
+            json_object_set_new(kw_send, "inline_file_id", json_string(inline_file_id));
+        }
+
     }
     gobj_send_event(gobj, "EV_SEND_EMAIL", kw_send, gobj);
 
@@ -434,6 +443,7 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
     const char *subject = kw_get_str(kw, "subject", "", 0);
     BOOL is_html = kw_get_bool(kw, "is_html", 0, 0);
     const char *attachment = kw_get_str(kw, "attachment", "", 0);
+    const char *inline_file_id = kw_get_str(kw, "inline_file_id", 0, 0);
 
     GBUFFER *gbuf = (GBUFFER *)(size_t)kw_get_int(kw, "gbuffer", 0, 0);
     if(!gbuf) {
@@ -501,6 +511,9 @@ PRIVATE int ac_send_curl(hgobj gobj, const char *event, json_t *kw, hgobj src)
     if(!empty_string(attachment)) {
         if(access(attachment, 0)==0) {
             json_object_set_new(kw_curl, "attachment", json_string(attachment));
+            if(!empty_string(inline_file_id)) {
+                json_object_set_new(kw_curl, "inline_file_id", json_string(inline_file_id));
+            }
         } else {
             log_error(0,
                 "gobj",         "%s", gobj_full_name(gobj),

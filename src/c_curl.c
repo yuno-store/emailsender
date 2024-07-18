@@ -749,7 +749,9 @@ PRIVATE GBUFFER *build_email(
     const char *reply_to,
     const char *subject,
     BOOL is_html,
-    const char *attachment)
+    const char *attachment,
+    const char *inline_file_id
+)
 {
     off_t file_size = 0;
     size_t len = gbuf_leftbytes(gbuf);
@@ -809,7 +811,12 @@ PRIVATE GBUFFER *build_email(
 
             gbuf_printf(new_gbuf, "Content-Type: text/plain; name=\"%s\"\r\n", filename);
             gbuf_printf(new_gbuf, "Content-Transfer-Encoding: base64\r\n");
-            gbuf_printf(new_gbuf, "Content-Disposition: attachment; filename=\"%s\"\r\n", filename);
+            if(!empty_string(inline_file_id)) {
+                gbuf_printf(new_gbuf, "Content-ID: <%s>\r\n", inline_file_id);
+                gbuf_printf(new_gbuf, "Content-Disposition: inline; filename=\"%s\"\r\n", filename);
+            } else {
+                gbuf_printf(new_gbuf, "Content-Disposition: attachment; filename=\"%s\"\r\n", filename);
+            }
             gbuf_printf(new_gbuf, "\r\n");
 
             /* File content here */
@@ -1062,6 +1069,7 @@ PRIVATE int ac_command(hgobj gobj, const char *event, json_t *kw, hgobj src)
         BOOL is_html = kw_get_bool(kw, "is_html", 0, 0);
         GBUFFER *gbuf = (GBUFFER *)(size_t)kw_get_int(kw, "gbuffer", 0, 0);
         const char *attachment = kw_get_str(kw, "attachment", 0, 0);
+        const char *inline_file_id = kw_get_str(kw, "inline_file_id", 0, 0);
         GBUFFER *src_gbuffer = build_email(
             gobj,
             gbuf,
@@ -1072,7 +1080,8 @@ PRIVATE int ac_command(hgobj gobj, const char *event, json_t *kw, hgobj src)
             reply_to,
             subject,
             is_html,
-            attachment
+            attachment,
+            inline_file_id
         );
 
         curl_off_t uploadsize = gbuf_leftbytes(src_gbuffer);
@@ -1301,4 +1310,3 @@ PUBLIC GCLASS *gclass_curl(void)
 {
     return &_gclass;
 }
-
